@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Airports in the United States</title>
+  <title>Ski Areas of the United States</title>
   <link rel="stylesheet"
     href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
   <link rel="stylesheet"
@@ -54,19 +54,6 @@
     line-height: 16px;
     margin: 0;
   }
-
-  /* Set icon color depending on tower status */
-  .has-tower {
-    color: #f6f6f6;
-    font-size: 15px;
-    text-shadow: 0 0 3px #000000;
-  }
-
-  .no-tower {
-    color: #555555;
-    font-size: 15px;
-    text-shadow: 0 0 3px #000000;
-  }
   </style>
   <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script
@@ -83,112 +70,34 @@
 <body>
   <div id="map"></div>
   <script>
-  //--- STATES ---
-
-  // color array for choropleth
-  colors = [chroma('c5dec3'), chroma('79b088'), chroma('6bb37e'), chroma('3fbf61'), chroma('24991c')]
-
-  // sets choropleth color per state depending on airport count
-  // bins are based on quartiles of the data, plus an extra bin for larger states (tx, ca, ak, fl)
-  function setColor(airportCount) {
-    var id = 0;
-    if (airportCount > 30) {
-      id = 4;
-    } else if (airportCount > 19 && airportCount <= 30) {
-      id = 3;
-    } else if (airportCount > 12 && airportCount <= 19) {
-      id = 2;
-    } else if (airportCount > 8 && airportCount <= 12) {
-      id = 1;
-    } else {
-      id = 0;
-    }
-    return colors[id];
-  }
-
-  // applies style for each state
-  function styleState(feature) {
-    return {
-      fillColor: setColor(feature.properties.count),
-      fillOpacity: 0.4,
-      weight: 2,
-      opacity: 1,
-      color: '#b4b4b4',
-      dashArray: '4'
-    };
-  }
-
-  // extra lil function with some fun regex to format airport names
-  function toProperCase(str) {
-    return str.replace(
-      /\w*/g, // select all words regardless of hyphenation
-      function(txt) {
-        return txt.charAt(0).toUpperCase() + txt.substr(1)
-          .toLowerCase(); // set first letter cap and rest lowercase
-      }
-    );
-  }
-
-  // create airport points based on GeoJSON
-  // also creates the heatmap data in the process
-  var airports = null;
-  var airportLayer = L.layerGroup([]);
-  var heatmapData = {
-    data: []
-  };
-
-  // config for heatmap
-  var heatmap_cfg = {
-    "radius": 1,
-    "maxOpacity": .6,
-    "scaleRadius": true,
-    "useLocalExtrema": false,
-    latField: 'lat',
-    lngField: 'lng',
-    valueField: 'count'
-  };
-
-  var baseVoyager = L.tileLayer(
-    'tiles/Basemap-RevisedMonochrome/{z}/{x}/{y}.png', {
-      attribution: 'TODOTODOTODO'
-  });
-
-  var tileChoropleth = L.tileLayer(
-    'tiles/Tileset-SkiChoroplethFeature/{z}/{x}/{y}.png', {
-      attribution: 'TODOTODOTODO'
-  });
-
-  var tileGradPoint = L.tileLayer(
-    'tiles/Tileset-SkiGradPointFeature/{z}/{x}/{y}.png', {
-      attribution: 'TODOTODOTODO'
-  });
-
-  var tileAll = L.tileLayer(
-    'tiles/Tileset-CitiesAreasChoroFeaturemap/{z}/{x}/{y}.png', {
-      attribution: 'TODOTODOTODO'
-  });
-
-  var tileSkiOnly = L.tileLayer(
-    'tiles/Tileset-SkiAreasOnly/{z}/{x}/{y}.png', {
-      attribution: 'TODOTODOTODO'
-  });
+  var baseModdedMonochrome = L.tileLayer(
+    'tiles/Basemap-RevisedMonochrome/{z}/{x}/{y}.png');
 
   var baseChoro = L.tileLayer(
-    'tiles/Tileset-BaseWithChoro/{z}/{x}/{y}.png', {
-      attribution: 'TODOTODOTODO'
-  });
+    'tiles/Tileset-BaseWithChoro/{z}/{x}/{y}.png');
 
-  // initialize the map, finally
-  var airportmap = L.map('map', {
+  var baseAll = L.tileLayer(
+    'tiles/Tileset-CitiesAreasChoroFeaturemap/{z}/{x}/{y}.png');
+
+  var tileChoropleth = L.tileLayer(
+    'tiles/Tileset-SkiChoroplethFeature/{z}/{x}/{y}.png');
+
+  var tileGradPoint = L.tileLayer(
+    'tiles/Tileset-SkiGradPointFeature/{z}/{x}/{y}.png');
+
+  var tileSkiOnly = L.tileLayer(
+    'tiles/Tileset-SkiAreasOnly/{z}/{x}/{y}.png');
+
+  var skimap = L.map('map', {
     center: [38, -100],
     zoom: 5,
     maxZoom: 8,
     minZoom: 5,
     detectRetina: true,
-    layers: [baseVoyager]
+    layers: [baseModdedMonochrome]
   });
 
-  // create and format the legend
+  colors = [chroma('c5dec3'), chroma('79b088'), chroma('6bb37e'), chroma('3fbf61'), chroma('24991c')]
   var legend = L.control({
     position: 'topright'
   });
@@ -208,7 +117,6 @@
     return div;
   };
 
-  // create and format the legend
   var legendDots = L.control({
     position: 'topright'
   });
@@ -223,58 +131,53 @@
     return div;
   };
 
-  airportmap.on('overlayadd', function (eventLayer) {
+  skimap.on('overlayadd', function (eventLayer) {
     if (eventLayer.name === 'Ski Areas per State') {
-        airportmap.addControl(legend);
+        skimap.addControl(legend);
     } else if (eventLayer.name === 'Ski Areas per City') {
-        airportmap.addControl(legendDots);
+        skimap.addControl(legendDots);
     }
   });
 
-  airportmap.on('overlayremove', function (eventLayer) {
+  skimap.on('overlayremove', function (eventLayer) {
     if (eventLayer.name === 'Ski Areas per City') {
-        airportmap.removeControl(legendDots);
+        skimap.removeControl(legendDots);
     } else if (eventLayer.name === 'Ski Areas per State') {
-        airportmap.removeControl(legend);
+        skimap.removeControl(legend);
     }
   });
 
-  airportmap.on('baselayerchange', function (eventLayer) {
+  skimap.on('baselayerchange', function (eventLayer) {
     if (eventLayer.name === 'All Tilemaps') {
-      airportmap.addControl(legendDots);
-      airportmap.addControl(legend);
+      skimap.addControl(legendDots);
+      skimap.addControl(legend);
     } else if (eventLayer.name === 'Basemap') {
-      airportmap.removeControl(legendDots);
-      airportmap.removeControl(legend);
+      skimap.removeControl(legendDots);
+      skimap.removeControl(legend);
     } else if (eventLayer.name === 'Basemap with Choropleth') {
-      airportmap.removeControl(legendDots);
-      airportmap.addControl(legend);
+      skimap.removeControl(legendDots);
+      skimap.addControl(legend);
     }
   })
 
-
-
-  // create and add scale
   L.control.scale({
     position: 'bottomleft'
-  }).addTo(airportmap);
+  }).addTo(skimap);
 
-  // put the layers into categories for use with layer control
   var baseMaps = {
-    "Basemap": baseVoyager,
+    "Basemap": baseModdedMonochrome,
     "Basemap with Choropleth": baseChoro,
-    "All Tilemaps": tileAll
+    "All Tilemaps": baseAll
   }
   var overlayMaps = {
     "Ski Areas per State": tileChoropleth,
-    "Ski Areas per City": tileGradPoint,
+    "Ski Areas per Major City": tileGradPoint,
     "Just Ski Areas": tileSkiOnly
   }
 
-  // create the layer control
   L.control.layers(baseMaps, overlayMaps, {
     position: 'topright'
-  }).addTo(airportmap);
+  }).addTo(skimap);
   </script>
 </body>
 
