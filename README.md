@@ -23,6 +23,6 @@ This map provides a good look into the best states to live in as a skier, but es
 
 ![ski area choropleth](img/readme-skiareascities.PNG)
 
-In the end, I think this shows a pretty helpful picture of cities with the most nearby ski areas. I definitely didnt expect there to be so many in the Northeast! If I were to change some aspects of my final map, I would label ski areas/cities and weight ski areas by size. Below is a picture of ski areas, the choropleth, and cities together.
+In the end, I think this shows a pretty helpful picture of cities with the most nearby ski areas. I definitely didnt expect there to be so many in the Northeast! If I were to change some aspects of my final map, I would label ski areas/cities and weight ski areas by size. Since I wasn't working with the data in leaflet, it would have been a nightmare to provide labels though. Below is a picture of ski areas, the choropleth, and cities together.
 
 ![everything](img/readme-all.PNG)
