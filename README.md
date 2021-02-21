@@ -3,6 +3,8 @@
 ### GEOG 458 - Lab 4 - Corin Zarkowski
 ---
 
+###[Web Map](https://corinzarkowski.github.io/geog458-lab4/)
+
 ## Description
 In this assignment I attempt to find the best places for skiers to live, based off both locations of ski areas and major cities. My examined area consists of the continental United States--Alaska would have been nice to include, but was not worth the extra processing time it would have incurred. Zoom levels of max8 and min5 are the same on each tileset--they are meant to be viewed in tandem.
 
