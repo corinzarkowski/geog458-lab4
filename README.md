@@ -4,7 +4,7 @@
 ---
 
 ## Description
-In this assignment I attempt to find the best places for skiers to live, based off both locations of ski areas and major cities.
+In this assignment I attempt to find the best places for skiers to live, based off both locations of ski areas and major cities. My examined area consists of the continental United States--Alaska would have been nice to include, but was not worth the extra processing time it would have incurred. Zoom levels of max8 and min5 are the same on each tileset--they are meant to be viewed in tandem.
 
 My first endeavor was to create a basemap--for this I really wanted to keep it simple, but make some minor changes to demonstrate my understanding of MapBox.
 I used a light monochrome basemap as a base, and minimized font sizes for minor cities, erased minor roads, added a little color, and enlarged/changed fonts for state names.
