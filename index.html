@@ -94,7 +94,9 @@
     maxZoom: 8,
     minZoom: 5,
     detectRetina: true,
-    layers: [baseModdedMonochrome]
+    layers: [baseModdedMonochrome],
+    attribution: 'TESTTEST',
+    maxBoundsViscosity: 1
   });
 
   colors = [chroma('c5dec3'), chroma('79b088'), chroma('6bb37e'), chroma('3fbf61'), chroma('24991c')]
@@ -134,13 +136,13 @@
   skimap.on('overlayadd', function (eventLayer) {
     if (eventLayer.name === 'Ski Areas per State') {
         skimap.addControl(legend);
-    } else if (eventLayer.name === 'Ski Areas per City') {
+    } else if (eventLayer.name === 'Ski Areas per Major City') {
         skimap.addControl(legendDots);
     }
   });
 
   skimap.on('overlayremove', function (eventLayer) {
-    if (eventLayer.name === 'Ski Areas per City') {
+    if (eventLayer.name === 'Ski Areas per Major City') {
         skimap.removeControl(legendDots);
     } else if (eventLayer.name === 'Ski Areas per State') {
         skimap.removeControl(legend);
@@ -178,7 +180,13 @@
   L.control.layers(baseMaps, overlayMaps, {
     position: 'topright'
   }).addTo(skimap);
+
+  var attribution = L.control.attribution();
+  attribution.setPrefix('');
+  attribution.addAttribution('Basemap @ MapBox Monochrome w/ minor changes || Ski Area Data @ Wikipedia, scraped/formatted by Corin Zarkowski || State Data @ leaflet || City Data @ https://gist.github.com/Miserlou');
+  skimap.addControl(attribution);
   </script>
+
 </body>
 
 </html>
